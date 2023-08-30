@@ -25,8 +25,7 @@ public class UserController {
         try {
             return ResponseEntity.ok(service.findUserByLogin(login));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
@@ -41,8 +40,7 @@ public class UserController {
         try {
             service.deleteUserByLogin(login);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.noContent().build();
     }
