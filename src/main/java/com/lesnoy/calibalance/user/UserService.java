@@ -31,7 +31,7 @@ public class UserService {
         }
 
         if (!user.getGoal().equals(Goal.KEEP_FIT)) {
-            user.setCal(user.getCal() * user.getGoal().getCalMultiplier());
+            user.setCal(user.getCal() + user.getCal() * user.getGoal().getCalMultiplier());
         }
 
         user.setProt(user.getCal() * user.getGoal().getProtMultiplier());
