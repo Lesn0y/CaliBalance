@@ -3,7 +3,6 @@ package com.lesnoy.calibalance.user;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 
 @Entity
@@ -29,6 +28,8 @@ public class User {
     private Sex sex;
     @Enumerated(EnumType.STRING)
     private Goal goal;
+    @Enumerated(EnumType.STRING)
+    private Activity activity;
     private float cal;
     private float prot;
     private float fats;
