@@ -11,8 +11,8 @@ public enum Goal {
     KEEP_FIT(0, 0.33f / 4, 0.25f / 4, 0.42f / 9),
     SLIM(-0.15f, 0.45f / 4, 0.2f / 4, 0.35f / 9);
 
-    private float calMultiplier;
-    private float protMultiplier;
-    private float fatMultiplier;
-    private float carbsMultiplier;
+    private final float calMultiplier;
+    private final float protMultiplier;
+    private final float fatMultiplier;
+    private final float carbsMultiplier;
 }
