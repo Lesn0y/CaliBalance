@@ -27,13 +27,9 @@ public class User {
     private Sex sex;
     @Enumerated(EnumType.STRING)
     private Goal goal;
-    @Positive
     private float cal;
-    @PositiveOrZero
     private float prot;
-    @PositiveOrZero
     private float fats;
-    @PositiveOrZero
     private float carbs;
 }
 
