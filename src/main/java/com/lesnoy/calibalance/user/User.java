@@ -21,6 +21,8 @@ public class User {
     private String login;
     @Positive(message = "Age must be positive")
     private int age;
+    @Positive(message = "Height must be positive")
+    private float height;
     @Positive(message = "Weight must be positive")
     private float weight;
     @Enumerated(EnumType.STRING)
