@@ -6,8 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
@@ -15,13 +13,17 @@ public class UserController {
 
     private final UserService service;
 
-    @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(service.findAll());
-    }
-
     @GetMapping("/{login}")
     public ResponseEntity<User> getUserByLogin(@PathVariable String login) {
+        try {
+            return ResponseEntity.ok(service.findUserByLogin(login));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }                                                                                       
+
+    @GetMapping("/{login}/stats")
+    public ResponseEntity<User> getUserStats(@PathVariable String login) {
         try {
             return ResponseEntity.ok(service.findUserByLogin(login));
         } catch (Exception e) {
