@@ -1,7 +1,10 @@
 package com.lesnoy.calibalance.user;
 
+import com.lesnoy.calibalance.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -9,18 +12,24 @@ public class UserService {
 
     private final UserRepository repository;
 
-    public User findUserByLogin(String login) throws Exception {
-        return repository.findByLogin(login)
-                .orElseThrow(Exception::new);
+    public Optional<User> findUserByLogin(String login) {
+        return repository.findByLogin(login);
     }
 
-    public User saveUser(User user) {
+    public User saveUser(User user) throws UserNotFoundException {
+        Optional<User> optUser = findUserByLogin(user.getLogin());
+        if (optUser.isPresent()) {
+            throw new UserNotFoundException("User with login " + user.getLogin() + " already exists");
+        }
         return repository.save(calculateStats(user));
     }
 
-    public void deleteUserByLogin(String login) throws Exception {
-        User user = findUserByLogin(login);
-        repository.delete(user);
+    public void deleteUserByLogin(String login) throws UserNotFoundException {
+        Optional<User> optUser = findUserByLogin(login);
+        if (optUser.isEmpty()) {
+            throw new UserNotFoundException("User with login " + login + " not exists");
+        }
+        repository.delete(optUser.get());
     }
 
     private User calculateStats(User user) {
