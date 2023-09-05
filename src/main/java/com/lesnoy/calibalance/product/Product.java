@@ -22,6 +22,8 @@ public class Product {
     private int idCreator;
     @NotNull
     private String name;
+    @PositiveOrZero
+    private int grams = 100;
     @Positive
     private float cal;
     @PositiveOrZero
