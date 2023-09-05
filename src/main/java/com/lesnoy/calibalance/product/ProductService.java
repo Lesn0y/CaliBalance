@@ -1,5 +1,8 @@
 package com.lesnoy.calibalance.product;
 
+import com.lesnoy.calibalance.exception.UserNotFoundException;
+import com.lesnoy.calibalance.user.User;
+import com.lesnoy.calibalance.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,29 +14,22 @@ import java.util.Optional;
 public class ProductService {
 
     private final ProductRepository repository;
+    private final UserService userService;
 
     public List<Product> findAll() {
         return repository.findAll();
     }
 
-    public Product findById(int id) throws Exception {
-        return repository.findById(id)
-                .orElseThrow(Exception::new);
-    }
-    public List<Product> findByName(String name) {
-        return repository.findByName(name);
+    public List<Product> findAllProductsByOwner(String login) throws UserNotFoundException {
+        Optional<User> userByLogin = userService.findUserByLogin(login);
+        if (userByLogin.isEmpty()) {
+            throw new UserNotFoundException("User with login " + login + " not exists");
+        }
+        return repository.findAllByIdCreator(userByLogin.get().getId());
     }
 
     public Product saveProduct(Product product) {
         return repository.save(product);
-    }
-
-    public void deleteProductById(int id) throws Exception {
-        Optional<Product> product = repository.findById(id);
-        if (product.isPresent())
-            repository.delete(product.get());
-        else
-            throw new Exception();
     }
 
 }

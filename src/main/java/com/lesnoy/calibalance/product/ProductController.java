@@ -1,5 +1,6 @@
 package com.lesnoy.calibalance.product;
 
+import com.lesnoy.calibalance.exception.UserNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,16 +17,14 @@ public class ProductController {
     private final ProductService service;
 
     @GetMapping
-    public ResponseEntity<List<Product>> findAll() {
-        return ResponseEntity.ok(service.findAll());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Product> findProductById(@PathVariable int id) {
+    public ResponseEntity<List<Product>> findAll(@RequestParam(name = "owner", required = false) String login) {
+        if (login == null) {
+            return ResponseEntity.ok(service.findAll());
+        }
         try {
-            return ResponseEntity.ok(service.findById(id));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.ok(service.findAllProductsByOwner(login));
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -33,15 +32,5 @@ public class ProductController {
     public ResponseEntity<Product> saveProduct(@RequestBody @Valid Product product) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(service.saveProduct(product));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteProductById(@PathVariable int id) {
-        try {
-            service.deleteProductById(id);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        return ResponseEntity.noContent().build();
     }
 }
