@@ -16,16 +16,16 @@ public class ProductService {
     private final ProductRepository repository;
     private final UserService userService;
 
-    public List<Product> findAll() {
-        return repository.findAll();
+    public List<Product> findAllByType(Integer typeId) {
+        return repository.findAllByIdCreatorAndProductType(0, ProductType.values()[typeId]);
     }
 
-    public List<Product> findAllProductsByOwner(String login) throws UserNotFoundException {
+    public List<Product> findAllProductsByOwnerAndType(String login, Integer typeId) throws UserNotFoundException {
         Optional<User> userByLogin = userService.findUserByLogin(login);
         if (userByLogin.isEmpty()) {
             throw new UserNotFoundException("User with login " + login + " not exists");
         }
-        return repository.findAllByIdCreator(userByLogin.get().getId());
+        return repository.findAllByIdCreatorAndProductType(userByLogin.get().getId(), ProductType.values()[typeId]);
     }
 
     public Product saveProduct(Product product) {

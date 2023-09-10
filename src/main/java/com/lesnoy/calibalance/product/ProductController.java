@@ -17,12 +17,13 @@ public class ProductController {
     private final ProductService service;
 
     @GetMapping
-    public ResponseEntity<List<Product>> findAll(@RequestParam(name = "owner", required = false) String login) {
+    public ResponseEntity<List<Product>> findAll(@RequestParam(name = "type") Integer typeId,
+                                                 @RequestParam(name = "owner", required = false) String login) {
         if (login == null) {
-            return ResponseEntity.ok(service.findAll());
+            return ResponseEntity.ok(service.findAllByType(typeId));
         }
         try {
-            return ResponseEntity.ok(service.findAllProductsByOwner(login));
+            return ResponseEntity.ok(service.findAllProductsByOwnerAndType(login, typeId));
         } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
