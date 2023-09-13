@@ -3,12 +3,11 @@ package com.lesnoy.calibalance.dish;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 
 @Entity
-@Table(name = "dish")
+@Table(name = "dishes")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -25,7 +24,7 @@ public class Dish {
     @NotNull
     private String name;
     @PositiveOrZero
-    private float grams;
+    private float grams = 100;
     @PositiveOrZero
     private float cal;
     @PositiveOrZero
