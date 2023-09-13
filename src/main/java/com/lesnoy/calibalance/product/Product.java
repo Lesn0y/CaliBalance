@@ -30,7 +30,7 @@ public class Product {
     private ProductType productType;
     @PositiveOrZero
     private int grams = 100;
-    @Positive
+    @PositiveOrZero
     private float cal;
     @PositiveOrZero
     private float prot;
