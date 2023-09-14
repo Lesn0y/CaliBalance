@@ -1,14 +1,15 @@
 package com.lesnoy.calibalance.user;
 
+import com.lesnoy.calibalance.exception.UserAlreadyExistsException;
 import com.lesnoy.calibalance.exception.UserNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
+@Log4j2
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
@@ -18,16 +19,21 @@ public class UserController {
 
     @GetMapping("/{login}")
     public ResponseEntity<User> getUserByLogin(@PathVariable String login) {
-        Optional<User> optUser = service.findUserByLogin(login);
-        return optUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        try {
+            User user = service.findUserByLogin(login);
+            return ResponseEntity.ok(user);
+        } catch (UserNotFoundException e) {
+            log.info(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
     public ResponseEntity<User> saveUser(@RequestBody @Valid User user) {
         try {
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(service.saveUser(user));
-        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(service.saveUser(user));
+        } catch (UserAlreadyExistsException e) {
+            log.info(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
@@ -38,6 +44,7 @@ public class UserController {
             service.deleteUserByLogin(login);
             return ResponseEntity.noContent().build();
         } catch (UserNotFoundException e) {
+            log.info(e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }

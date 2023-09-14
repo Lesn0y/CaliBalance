@@ -1,5 +1,6 @@
 package com.lesnoy.calibalance.user;
 
+import com.lesnoy.calibalance.exception.UserAlreadyExistsException;
 import com.lesnoy.calibalance.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,20 +13,24 @@ public class UserService {
 
     private final UserRepository repository;
 
-    public Optional<User> findUserByLogin(String login) {
-        return repository.findByLogin(login);
+    public User findUserByLogin(String login) throws UserNotFoundException {
+        Optional<User> user = repository.findByLogin(login);
+        if (user.isEmpty()) {
+            throw new UserNotFoundException("User with login " + login + " not exists");
+        }
+        return user.get();
     }
 
-    public User saveUser(User user) throws UserNotFoundException {
-        Optional<User> optUser = findUserByLogin(user.getLogin());
+    public User saveUser(User user) throws UserAlreadyExistsException {
+        Optional<User> optUser = repository.findByLogin(user.getLogin());
         if (optUser.isPresent()) {
-            throw new UserNotFoundException("User with login " + user.getLogin() + " already exists");
+            throw new UserAlreadyExistsException("User with login " + user.getLogin() + " already exists");
         }
         return repository.save(calculateStats(user));
     }
 
     public void deleteUserByLogin(String login) throws UserNotFoundException {
-        Optional<User> optUser = findUserByLogin(login);
+        Optional<User> optUser = repository.findByLogin(login);
         if (optUser.isEmpty()) {
             throw new UserNotFoundException("User with login " + login + " not exists");
         }
