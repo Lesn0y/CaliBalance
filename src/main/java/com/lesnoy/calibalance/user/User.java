@@ -17,7 +17,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @NotNull
-    private String login;
+    private String username;
     @Positive(message = "Age must be positive")
     private int age;
     @Positive(message = "Height must be positive")

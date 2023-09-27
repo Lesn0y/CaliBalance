@@ -13,26 +13,26 @@ public class UserService {
 
     private final UserRepository repository;
 
-    public User findUserByLogin(String login) throws UserNotFoundException {
-        Optional<User> user = repository.findByLogin(login);
+    public User findUserByUsername(String username) throws UserNotFoundException {
+        Optional<User> user = repository.findByUsername(username);
         if (user.isEmpty()) {
-            throw new UserNotFoundException("User with login " + login + " not exists");
+            throw new UserNotFoundException("User with username " + username + " not exists");
         }
         return user.get();
     }
 
     public User saveUser(User user) throws UserAlreadyExistsException {
-        Optional<User> optUser = repository.findByLogin(user.getLogin());
+        Optional<User> optUser = repository.findByUsername(user.getUsername());
         if (optUser.isPresent()) {
-            throw new UserAlreadyExistsException("User with login " + user.getLogin() + " already exists");
+            throw new UserAlreadyExistsException("User with username " + user.getUsername() + " already exists");
         }
         return repository.save(calculateStats(user));
     }
 
-    public void deleteUserByLogin(String login) throws UserNotFoundException {
-        Optional<User> optUser = repository.findByLogin(login);
+    public void deleteUserByUsername(String username) throws UserNotFoundException {
+        Optional<User> optUser = repository.findByUsername(username);
         if (optUser.isEmpty()) {
-            throw new UserNotFoundException("User with login " + login + " not exists");
+            throw new UserNotFoundException("User with username " + username + " not exists");
         }
         repository.delete(optUser.get());
     }

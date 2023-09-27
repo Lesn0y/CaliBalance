@@ -17,10 +17,10 @@ public class UserController {
 
     private final UserService service;
 
-    @GetMapping("/{login}")
-    public ResponseEntity<User> getUserByLogin(@PathVariable String login) {
+    @GetMapping("/{username}")
+    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
         try {
-            User user = service.findUserByLogin(login);
+            User user = service.findUserByUsername(username);
             return ResponseEntity.ok(user);
         } catch (UserNotFoundException e) {
             log.info(e.getMessage());
@@ -38,10 +38,10 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/{login}")
-    public ResponseEntity<Object> deleteUserByLogin(@PathVariable String login) {
+    @DeleteMapping("/{username}")
+    public ResponseEntity<Object> deleteUserByUsername(@PathVariable String username) {
         try {
-            service.deleteUserByLogin(login);
+            service.deleteUserByUsername(username);
             return ResponseEntity.noContent().build();
         } catch (UserNotFoundException e) {
             log.info(e.getMessage());
