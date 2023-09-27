@@ -2,7 +2,6 @@ package com.lesnoy.calibalance.entry;
 
 import com.lesnoy.calibalance.exception.NoValuePresentException;
 import com.lesnoy.calibalance.exception.UserNotFoundException;
-import com.lesnoy.calibalance.product.Product;
 import com.lesnoy.calibalance.product.ProductService;
 import com.lesnoy.calibalance.user.User;
 import com.lesnoy.calibalance.user.UserService;
@@ -19,12 +18,10 @@ public class EntryService {
 
     public Entry getLastModifiedEntry(String username) throws UserNotFoundException, NoValuePresentException {
         User user = userService.findUserByLogin(username);
-        Entry entry = entryRepository.findTopByUserIdOrderByDate(user.getId());
+        Entry entry = entryRepository.findTopByUserIdOrderByDateDesc(user.getId());
         if (entry == null)
             throw new NoValuePresentException("No one entries for user @" + username + " exists");
         return entry;
     }
-
-
 
 }

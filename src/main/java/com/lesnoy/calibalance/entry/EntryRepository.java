@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EntryRepository extends JpaRepository<Entry, Integer> {
 
-    Entry findTopByUserIdOrderByDate(int userId);
+    Entry findTopByUserIdOrderByDateDesc(int userId);
 
 }
