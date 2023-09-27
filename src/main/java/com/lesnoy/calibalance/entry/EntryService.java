@@ -20,7 +20,7 @@ public class EntryService {
     private final ProductService productService;
 
     public Entry getLastModifiedEntry(String username) throws UserNotFoundException, NoValuePresentException {
-        User user = userService.findUserByLogin(username);
+        User user = userService.findUserByUsername(username);
         Entry entry = entryRepository.findTopByUserIdOrderByDateDesc(user.getId());
         if (entry == null)
             throw new NoValuePresentException("No one entries for user @" + username + " exists");
@@ -28,8 +28,8 @@ public class EntryService {
     }
 
     public Entry saveNewEntry(EntryDTO entryDTO) throws UserNotFoundException, NoValuePresentException {
-        User user = userService.findUserByLogin(entryDTO.getUsername());
-        Entry lastModifiedEntry = getLastModifiedEntry(user.getLogin());
+        User user = userService.findUserByUsername(entryDTO.getUsername());
+        Entry lastModifiedEntry = getLastModifiedEntry(user.getUsername());
         Product product = productService.findProductById(entryDTO.getProductId());
 
         Entry newEntry = new Entry();
