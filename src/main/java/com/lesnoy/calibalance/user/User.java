@@ -1,9 +1,12 @@
 package com.lesnoy.calibalance.user;
 
+import com.lesnoy.calibalance.product.Product;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -30,6 +33,11 @@ public class User {
     private Goal goal;
     @Enumerated(EnumType.STRING)
     private Activity activity;
+    @ManyToMany
+    @JoinTable(name = "users_products",
+    joinColumns = @JoinColumn(name = "user_id"),
+    inverseJoinColumns = @JoinColumn(name = "product_id"))
+    private List<Product> products;
     private float cal;
     private float prot;
     private float fats;
