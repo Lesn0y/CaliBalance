@@ -33,23 +33,20 @@ public class ProductService {
         }
         return products;
     }
-    public List<Product> findAllProductsByType(Integer typeId) throws EmptyCollectionException {
-        ProductType productType = ProductType.values()[typeId];
-        List<Product> products = productRepository
-                .findAllByIdCreatorAndProductType(0, productType);
-        if (products.isEmpty()) {
-            throw new EmptyCollectionException("User has not saved any product with type '" + productType.name() + "' yet");
-        }
-        return products;
+    public List<Product> findAllProductsByType(Integer typeId) throws EmptyCollectionException, UserNotFoundException {
+        return findAllProductsByOwnerAndType("ADMIN", typeId);
     }
 
     public List<Product> findAllProductsByOwnerAndType(String login, int typeId) throws UserNotFoundException, EmptyCollectionException {
-        User user = userService.findUserByUsername(login);
         ProductType productType = ProductType.values()[typeId];
-        List<Product> products = productRepository
-                .findAllByIdCreatorAndProductType(user.getId(), productType);
+        User user = userService.findUserByUsername(login);
+        List<Product> products = user.getProducts()
+                .stream()
+                .filter(product -> product.getProductType().ordinal() == typeId)
+                .toList();
+
         if (products.isEmpty()) {
-            throw new EmptyCollectionException("User '" + user.getUsername() + "' has not saved any product with type '" + productType.name() + "' yet");
+            throw new EmptyCollectionException("User has not saved any product with type '" + productType.name() + "' yet");
         }
         return products;
     }
@@ -57,7 +54,7 @@ public class ProductService {
     public Product saveProduct(ProductDTO productDto) throws UserNotFoundException {
         User userByLogin = userService.findUserByUsername(productDto.getOwnerName());
         Product product = new Product(productDto);
-        product.setIdCreator(userByLogin.getId());
+        userByLogin.getProducts().add(product);
         return productRepository.save(product);
     }
 

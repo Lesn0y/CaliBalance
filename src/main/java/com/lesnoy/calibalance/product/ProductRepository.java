@@ -7,8 +7,5 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
-
-    List<Product> findAllByIdCreatorAndProductType(int idCreator, ProductType productType);
-
     List<Product> findAllByName(String name);
 }
