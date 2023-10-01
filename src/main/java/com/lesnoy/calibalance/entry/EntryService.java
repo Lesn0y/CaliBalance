@@ -21,7 +21,7 @@ public class EntryService {
 
     public Entry getLastModifiedEntry(String username) throws UserNotFoundException, NoValuePresentException {
         User user = userService.findUserByUsername(username);
-        Entry entry = entryRepository.findTopByUserIdOrderByDateDesc(user.getId());
+        Entry entry = entryRepository.findTodayLastEntry(user.getId());
         if (entry == null)
             throw new NoValuePresentException("No one entries for user @" + username + " exists");
         return entry;
