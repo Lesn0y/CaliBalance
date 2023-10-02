@@ -36,7 +36,6 @@ public class UserService {
         }
         repository.delete(optUser.get());
     }
-
     private User calculateStats(User user) {
         if (user.getSex().equals(Sex.MAN)) {
             user.setCal((10 * user.getWeight() + 6.25f * user.getHeight() - 5 * user.getAge() + 5) * user.getActivity().getMultiplier());

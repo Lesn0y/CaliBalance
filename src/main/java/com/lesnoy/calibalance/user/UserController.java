@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService service;
+    private final UserService userService;
 
     @GetMapping("/{username}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
         try {
-            User user = service.findUserByUsername(username);
+            User user = userService.findUserByUsername(username);
             return ResponseEntity.ok(user);
         } catch (UserNotFoundException e) {
             log.info(e.getMessage());
@@ -31,7 +31,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<User> saveUser(@RequestBody @Valid User user) {
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(service.saveUser(user));
+            return ResponseEntity.status(HttpStatus.CREATED).body(userService.saveUser(user));
         } catch (UserAlreadyExistsException e) {
             log.info(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -41,7 +41,7 @@ public class UserController {
     @DeleteMapping("/{username}")
     public ResponseEntity<Object> deleteUserByUsername(@PathVariable String username) {
         try {
-            service.deleteUserByUsername(username);
+            userService.deleteUserByUsername(username);
             return ResponseEntity.noContent().build();
         } catch (UserNotFoundException e) {
             log.info(e.getMessage());
