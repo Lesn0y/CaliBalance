@@ -1,6 +1,7 @@
 package com.lesnoy.calibalance.product;
 
 import com.lesnoy.calibalance.exception.EmptyCollectionException;
+import com.lesnoy.calibalance.exception.NoValuePresentException;
 import com.lesnoy.calibalance.exception.UserNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,16 @@ public class ProductController {
         } catch (EmptyCollectionException e) {
             log.info(e.getMessage());
             return ResponseEntity.noContent().build();
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> findById(@PathVariable int id) {
+        try {
+            return ResponseEntity.ok(service.findProductById(id));
+        } catch (NoValuePresentException e) {
+            log.info(e.getMessage());
+            return ResponseEntity.notFound().build();
         }
     }
 
