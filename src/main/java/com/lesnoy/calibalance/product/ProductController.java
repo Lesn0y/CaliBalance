@@ -40,10 +40,11 @@ public class ProductController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<Product> saveProduct(@RequestBody @Valid ProductDTO product) {
+    @PostMapping("/{username}")
+    public ResponseEntity<Product> saveProductToUser(@PathVariable String username,
+                                               @RequestBody @Valid Product product) {
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(service.saveProduct(product));
+            return ResponseEntity.status(HttpStatus.CREATED).body(service.saveProductToUser(product, username));
         } catch (UserNotFoundException e) {
             log.info(e.getMessage());
             return ResponseEntity.notFound().build();

@@ -51,10 +51,9 @@ public class ProductService {
         return products;
     }
 
-    public Product saveProduct(ProductDTO productDto) throws UserNotFoundException {
-        User userByLogin = userService.findUserByUsername(productDto.getOwnerName());
-        Product product = new Product(productDto);
-        userByLogin.getProducts().add(product);
+    public Product saveProductToUser(Product product, String owner) throws UserNotFoundException {
+        User user = userService.findUserByUsername(owner);
+        user.getProducts().add(product);
         return productRepository.save(product);
     }
 
