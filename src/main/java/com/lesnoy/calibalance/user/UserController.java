@@ -1,6 +1,5 @@
 package com.lesnoy.calibalance.user;
 
-import com.lesnoy.calibalance.exception.UserAlreadyExistsException;
 import com.lesnoy.calibalance.exception.UserNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,12 +29,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<User> saveUser(@RequestBody @Valid User user) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(userService.saveUser(user));
-        } catch (UserAlreadyExistsException e) {
-            log.info(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.saveUser(user));
     }
 
     @DeleteMapping("/{username}")

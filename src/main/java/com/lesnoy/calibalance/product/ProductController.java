@@ -53,10 +53,22 @@ public class ProductController {
 
     @PostMapping("/{username}")
     public ResponseEntity<Product> saveProductToUser(@PathVariable String username,
-                                               @RequestBody @Valid Product product) {
+                                                     @RequestBody @Valid Product product) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(service.saveProductToUser(product, username));
         } catch (UserNotFoundException e) {
+            log.info(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{username}/{productId}")
+    public ResponseEntity<Product> deleteProductFromUserMenu(@PathVariable String username,
+                                                             @PathVariable int productId) {
+        try {
+            service.deleteProductFromUserMenu(productId, username);
+            return ResponseEntity.noContent().build();
+        } catch (UserNotFoundException | NoValuePresentException e) {
             log.info(e.getMessage());
             return ResponseEntity.notFound().build();
         }

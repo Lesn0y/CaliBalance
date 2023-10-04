@@ -57,4 +57,14 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    public void deleteProductFromUserMenu(int productId, String owner) throws UserNotFoundException, NoValuePresentException {
+        User user = userService.findUserByUsername(owner);
+        Optional<Product> product = user.getProducts().stream().filter(pr -> pr.getId() == productId).findFirst();
+        if (product.isEmpty()) {
+            throw new NoValuePresentException("Product with id = " + productId + " not exists");
+        }
+        user.getProducts().remove(product.get());
+        userService.saveUser(user);
+    }
+
 }

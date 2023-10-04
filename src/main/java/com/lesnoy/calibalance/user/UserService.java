@@ -1,6 +1,5 @@
 package com.lesnoy.calibalance.user;
 
-import com.lesnoy.calibalance.exception.UserAlreadyExistsException;
 import com.lesnoy.calibalance.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,11 +20,7 @@ public class UserService {
         return user.get();
     }
 
-    public User saveUser(User user) throws UserAlreadyExistsException {
-        Optional<User> optUser = repository.findByUsername(user.getUsername());
-        if (optUser.isPresent()) {
-            throw new UserAlreadyExistsException("User with username " + user.getUsername() + " already exists");
-        }
+    public User saveUser(User user) {
         return repository.save(calculateStats(user));
     }
 
