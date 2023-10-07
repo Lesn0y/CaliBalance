@@ -20,8 +20,12 @@ public class EntryController {
     @GetMapping
     public ResponseEntity<Entry> getLastModifiedEntryByUsername(@RequestParam("username") String username) {
         try {
-            return ResponseEntity.ok(service.getLastModifiedEntry(username));
-        } catch (UserNotFoundException | NoValuePresentException e) {
+            Entry lastEntry = service.getLastModifiedEntry(username);
+            if (lastEntry == null) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(lastEntry);
+        } catch (UserNotFoundException e) {
             log.info(e.getMessage());
             return ResponseEntity.notFound().build();
         }
