@@ -26,7 +26,6 @@ public class EntryService {
 
     public Entry saveNewEntry(EntryDTO entryDTO) throws UserNotFoundException, NoValuePresentException {
         User user = userService.findUserByUsername(entryDTO.getUsername());
-        Entry lastModifiedEntry = getLastModifiedEntry(user.getUsername());
         Product product = productService.findProductById(entryDTO.getProductId());
 
         Entry newEntry = new Entry();
@@ -34,10 +33,19 @@ public class EntryService {
         newEntry.setProduct(product);
         newEntry.setDate(new Date());
         newEntry.setGrams(entryDTO.getGrams());
-        newEntry.setCalLeft(lastModifiedEntry.getCalLeft() - (product.getCal() * entryDTO.getGrams() / 100));
-        newEntry.setProtLeft(lastModifiedEntry.getProtLeft() - (product.getProt() * entryDTO.getGrams() / 100));
-        newEntry.setFatsLeft(lastModifiedEntry.getFatsLeft() - (product.getFats() * entryDTO.getGrams() / 100));
-        newEntry.setCarbsLeft(lastModifiedEntry.getCarbsLeft() - (product.getFats() * entryDTO.getGrams() / 100));
+
+        Entry lastModifiedEntry = getLastModifiedEntry(user.getUsername());
+        if (lastModifiedEntry == null) {
+            newEntry.setCalLeft(user.getCal() - (product.getCal() * entryDTO.getGrams() / 100));
+            newEntry.setProtLeft(user.getProt() - (product.getProt() * entryDTO.getGrams() / 100));
+            newEntry.setFatsLeft(user.getFats() - (product.getFats() * entryDTO.getGrams() / 100));
+            newEntry.setCarbsLeft(user.getCarbs() - (product.getFats() * entryDTO.getGrams() / 100));
+        } else {
+            newEntry.setCalLeft(lastModifiedEntry.getCalLeft() - (product.getCal() * entryDTO.getGrams() / 100));
+            newEntry.setProtLeft(lastModifiedEntry.getProtLeft() - (product.getProt() * entryDTO.getGrams() / 100));
+            newEntry.setFatsLeft(lastModifiedEntry.getFatsLeft() - (product.getFats() * entryDTO.getGrams() / 100));
+            newEntry.setCarbsLeft(lastModifiedEntry.getCarbsLeft() - (product.getFats() * entryDTO.getGrams() / 100));
+        }
 
         return entryRepository.save(newEntry);
     }
