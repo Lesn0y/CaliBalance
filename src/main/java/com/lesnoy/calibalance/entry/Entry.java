@@ -19,7 +19,6 @@ import java.util.Date;
 @Getter
 @Setter
 public class Entry {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -29,7 +28,7 @@ public class Entry {
     @JoinColumn(name = "product_id")
     @ManyToOne
     private Product product;
-        @Column(name = "date")
+    @Column(name = "date")
     private Date date;
     @PositiveOrZero
     private int grams = 100;
