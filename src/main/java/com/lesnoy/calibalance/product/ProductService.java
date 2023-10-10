@@ -39,7 +39,7 @@ public class ProductService {
 
     public List<Product> findAllProductsByOwnerAndType(String login, int typeId) throws UserNotFoundException, EmptyCollectionException {
         ProductType productType = ProductType.values()[typeId];
-        User user = userService.findUserByUsername(login);
+        User user = userService.findByUsername(login);
         List<Product> products = user.getProducts()
                 .stream()
                 .filter(product -> product.getProductType().ordinal() == typeId)
@@ -52,19 +52,19 @@ public class ProductService {
     }
 
     public Product saveProductToUser(Product product, String owner) throws UserNotFoundException {
-        User user = userService.findUserByUsername(owner);
+        User user = userService.findByUsername(owner);
         user.getProducts().add(product);
         return productRepository.save(product);
     }
 
     public void deleteProductFromUserMenu(int productId, String owner) throws UserNotFoundException, NoValuePresentException {
-        User user = userService.findUserByUsername(owner);
+        User user = userService.findByUsername(owner);
         Optional<Product> product = user.getProducts().stream().filter(pr -> pr.getId() == productId).findFirst();
         if (product.isEmpty()) {
             throw new NoValuePresentException("Product with id = " + productId + " not exists");
         }
         user.getProducts().remove(product.get());
-        userService.saveUser(user);
+        userService.save(user);
     }
 
 }

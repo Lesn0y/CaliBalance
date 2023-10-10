@@ -3,8 +3,8 @@ package com.lesnoy.calibalance.user;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@Getter
 @AllArgsConstructor
+@Getter
 public enum Goal {
 
     PUMP_UP(0.15f, 0.3f / 4, 0.15f / 9, 0.55f / 4),

@@ -19,8 +19,7 @@ public class UserController {
     @GetMapping("/{username}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
         try {
-            User user = userService.findUserByUsername(username);
-            return ResponseEntity.ok(user);
+            return ResponseEntity.ok(userService.findByUsername(username));
         } catch (UserNotFoundException e) {
             log.info(e.getMessage());
             return ResponseEntity.notFound().build();
@@ -29,13 +28,13 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<User> saveUser(@RequestBody @Valid User user) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.saveUser(user));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(user));
     }
 
     @DeleteMapping("/{username}")
     public ResponseEntity<Object> deleteUserByUsername(@PathVariable String username) {
         try {
-            userService.deleteUserByUsername(username);
+            userService.deleteByUsername(username);
             return ResponseEntity.noContent().build();
         } catch (UserNotFoundException e) {
             log.info(e.getMessage());
