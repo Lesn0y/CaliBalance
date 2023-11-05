@@ -26,7 +26,7 @@ public class EntryService {
 
     public Entry saveNewEntry(EntryDTO entryDTO) throws UserNotFoundException, NoValuePresentException {
         User user = userService.findByUsername(entryDTO.getUsername());
-        Product product = productService.findProductById(entryDTO.getProductId());
+        Product product = productService.findById(entryDTO.getProductId());
 
         Entry newEntry = new Entry();
         newEntry.setUser(user);

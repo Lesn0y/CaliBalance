@@ -18,20 +18,37 @@ import java.util.List;
 @RequestMapping("/api/v1/products")
 public class ProductController {
 
-    private final ProductService service;
+    private final ProductService productService;
 
     @GetMapping
-    public ResponseEntity<List<Product>> findAllProducts(@RequestParam(name = "type", required = false) Integer typeId,
-                                                         @RequestParam(name = "name", required = false) String name,
-                                                         @RequestParam(name = "owner", required = false) String login) {
+    public ResponseEntity<List<Product>> findAdminProducts(@RequestParam(name = "ordinalType", required = false) Integer ordinalType,
+                                                           @RequestParam(name = "name", required = false) String name) {
         try {
-            if (name != null) {
-                return ResponseEntity.ok(service.findProductsByName(name));
+            if (ordinalType == null) {
+                return ResponseEntity.ok(productService.findAdminProductsByName(name));
             }
-            if (login == null) {
-                return ResponseEntity.ok(service.findAllProductsByType(typeId));
+            if (name == null) {
+                return ResponseEntity.ok(productService.findAdminProductsByType(ordinalType));
             }
-            return ResponseEntity.ok(service.findAllProductsByOwnerAndType(login, typeId));
+            return ResponseEntity.badRequest().build();
+        } catch (UserNotFoundException | EmptyCollectionException e) {
+            log.info(e.getMessage());
+            return ResponseEntity.noContent().build();
+        }
+    }
+
+    @GetMapping("/{owner}")
+    public ResponseEntity<List<Product>> findOwnerProducts(@PathVariable String owner,
+                                                           @RequestParam(name = "ordinalType", required = false) Integer ordinalType,
+                                                           @RequestParam(name = "name", required = false) String name) {
+        try {
+            if (ordinalType == null) {
+                return ResponseEntity.ok(productService.findProductsByOwnerAndName(owner, name));
+            }
+            if (name == null) {
+                return ResponseEntity.ok(productService.findProductsByOwnerAndType(owner, ordinalType));
+            }
+            return ResponseEntity.badRequest().build();
         } catch (UserNotFoundException e) {
             log.info(e.getMessage());
             return ResponseEntity.notFound().build();
@@ -42,9 +59,9 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> findById(@PathVariable int id) {
+    public ResponseEntity<Product> findProductsById(@PathVariable int id) {
         try {
-            return ResponseEntity.ok(service.findProductById(id));
+            return ResponseEntity.ok(productService.findById(id));
         } catch (NoValuePresentException e) {
             log.info(e.getMessage());
             return ResponseEntity.notFound().build();
@@ -55,7 +72,7 @@ public class ProductController {
     public ResponseEntity<Product> saveProductToUser(@PathVariable String username,
                                                      @RequestBody @Valid Product product) {
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(service.saveProductToUser(product, username));
+            return ResponseEntity.status(HttpStatus.CREATED).body(productService.saveProductToUser(product, username));
         } catch (UserNotFoundException e) {
             log.info(e.getMessage());
             return ResponseEntity.notFound().build();
@@ -66,7 +83,7 @@ public class ProductController {
     public ResponseEntity<Product> deleteProductFromUserMenu(@PathVariable String username,
                                                              @PathVariable int productId) {
         try {
-            service.deleteProductFromUserMenu(productId, username);
+            productService.deleteProductFromUser(productId, username);
             return ResponseEntity.noContent().build();
         } catch (UserNotFoundException | NoValuePresentException e) {
             log.info(e.getMessage());
