@@ -18,6 +18,7 @@ public class UserController {
 
     @GetMapping("/{username}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
+        log.info("Request GET \"\"/api/v1/users/username\" with 'username='"+  username + "' ACCEPTED");
         try {
             return ResponseEntity.ok(userService.findByUsername(username));
         } catch (UserNotFoundException e) {
@@ -28,6 +29,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<User> saveUser(@RequestBody @Valid User user) {
+        log.info("Request POST \"/api/v1/users\" with 'user='"+  user.getUsername() + "' ACCEPTED");
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(user));
     }
 

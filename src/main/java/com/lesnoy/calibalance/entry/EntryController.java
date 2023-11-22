@@ -18,6 +18,10 @@ public class EntryController {
 
     @GetMapping
     public ResponseEntity<Entry> getLastModifiedEntryByUsername(@RequestParam("username") String username) {
+        log.info("Request GET \"/api/v1/entries\" with 'username='"+  username + "' ACCEPTED");
+        if (username == null || username.isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
         try {
             Entry lastEntry = entryService.getLastModifiedEntry(username);
             if (lastEntry == null) {
@@ -25,13 +29,14 @@ public class EntryController {
             }
             return ResponseEntity.ok(lastEntry);
         } catch (UserNotFoundException e) {
-            log.info(e.getMessage());
+            log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }
 
     @PostMapping
     public ResponseEntity<Entry> saveEntry(@RequestBody EntryDTO entryDTO) {
+        log.info("Request by POST \"/api/v1/entries\" with 'entryDTO='"+  entryDTO.getUsername() + "' ACCEPTED");
         try {
             return new ResponseEntity<>(entryService.saveNewEntry(entryDTO), HttpStatus.CREATED);
         } catch (UserNotFoundException | NoValuePresentException e) {
