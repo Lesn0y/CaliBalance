@@ -1,7 +1,8 @@
-package com.lesnoy.calibalance.entry;
+package com.lesnoy.calibalance.user.entry;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.lesnoy.calibalance.product.Product;
+import com.lesnoy.calibalance.user.product.Product;
 import com.lesnoy.calibalance.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -24,6 +25,7 @@ public class Entry {
     private int id;
     @JoinColumn(name = "user_id")
     @ManyToOne
+    @JsonIgnore
     private User user;
     @JoinColumn(name = "product_id")
     @ManyToOne

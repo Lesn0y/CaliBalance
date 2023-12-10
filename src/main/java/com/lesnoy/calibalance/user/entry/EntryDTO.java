@@ -1,4 +1,4 @@
-package com.lesnoy.calibalance.entry;
+package com.lesnoy.calibalance.user.entry;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

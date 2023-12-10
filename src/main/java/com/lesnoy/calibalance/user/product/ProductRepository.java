@@ -1,4 +1,4 @@
-package com.lesnoy.calibalance.product;
+package com.lesnoy.calibalance.user.product;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

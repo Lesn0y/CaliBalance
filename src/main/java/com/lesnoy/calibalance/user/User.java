@@ -1,6 +1,7 @@
 package com.lesnoy.calibalance.user;
 
-import com.lesnoy.calibalance.product.Product;
+import com.lesnoy.calibalance.user.entry.Entry;
+import com.lesnoy.calibalance.user.product.Product;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -40,6 +41,9 @@ public class User {
     joinColumns = @JoinColumn(name = "user_id"),
     inverseJoinColumns = @JoinColumn(name = "product_id"))
     private List<Product> products;
+    @OneToMany
+    @JoinColumn(name = "user_id")
+    private List<Entry> entries;
     private float cal;
     private float prot;
     private float fats;

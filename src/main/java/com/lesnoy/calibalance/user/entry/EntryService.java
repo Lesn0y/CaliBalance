@@ -1,9 +1,9 @@
-package com.lesnoy.calibalance.entry;
+package com.lesnoy.calibalance.user.entry;
 
 import com.lesnoy.calibalance.exception.NoValuePresentException;
 import com.lesnoy.calibalance.exception.UserNotFoundException;
-import com.lesnoy.calibalance.product.Product;
-import com.lesnoy.calibalance.product.ProductService;
+import com.lesnoy.calibalance.user.product.Product;
+import com.lesnoy.calibalance.user.product.ProductService;
 import com.lesnoy.calibalance.user.User;
 import com.lesnoy.calibalance.user.UserService;
 import lombok.RequiredArgsConstructor;

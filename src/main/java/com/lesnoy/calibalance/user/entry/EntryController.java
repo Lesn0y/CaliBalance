@@ -1,4 +1,4 @@
-package com.lesnoy.calibalance.entry;
+package com.lesnoy.calibalance.user.entry;
 
 import com.lesnoy.calibalance.exception.NoValuePresentException;
 import com.lesnoy.calibalance.exception.UserNotFoundException;

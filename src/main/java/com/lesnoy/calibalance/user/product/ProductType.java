@@ -1,4 +1,4 @@
-package com.lesnoy.calibalance.product;
+package com.lesnoy.calibalance.user.product;
 
 public enum ProductType {
     UNTYPED,
