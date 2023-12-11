@@ -68,9 +68,9 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{username}/entries")
+    @GetMapping("/{username}/entries/daily")
     public ResponseEntity<List<Entry>> findTodayEntries(@PathVariable("username") String username) {
-        log.info("Request GET \"/{username}/entries\" with 'username=" + username + "' ACCEPTED");
+        log.info("Request GET \"/{username}/entries/daily\" with 'username=" + username + "' ACCEPTED");
         try {
             return ResponseEntity.ok(entryService.findAllTodayEntries(username));
         } catch (UserNotFoundException | EmptyCollectionException e) {
@@ -79,7 +79,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{username}/entries/daily-stats")
+    @GetMapping("/{username}/entries/daily-last")
     public ResponseEntity<UserInfoDTO> findLastModifiedEntryWithUser(@PathVariable("username") String username) {
         log.info("Request GET \"/{username}/entries/daily-stats\" with 'username=" + username + "' ACCEPTED");
         try {
