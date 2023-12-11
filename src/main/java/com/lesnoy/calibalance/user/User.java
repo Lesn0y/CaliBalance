@@ -41,9 +41,6 @@ public class User {
     joinColumns = @JoinColumn(name = "user_id"),
     inverseJoinColumns = @JoinColumn(name = "product_id"))
     private List<Product> products;
-    @OneToMany
-    @JoinColumn(name = "user_id")
-    private List<Entry> entries;
     private float cal;
     private float prot;
     private float fats;
