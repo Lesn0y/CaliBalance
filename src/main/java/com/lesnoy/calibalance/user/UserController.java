@@ -1,7 +1,10 @@
 package com.lesnoy.calibalance.user;
 
 import com.lesnoy.calibalance.exception.EmptyCollectionException;
+import com.lesnoy.calibalance.exception.NoValuePresentException;
 import com.lesnoy.calibalance.exception.UserNotFoundException;
+import com.lesnoy.calibalance.user.entry.Entry;
+import com.lesnoy.calibalance.user.entry.EntryService;
 import com.lesnoy.calibalance.user.product.Product;
 import com.lesnoy.calibalance.user.product.ProductService;
 import jakarta.validation.Valid;
@@ -21,10 +24,11 @@ public class UserController {
 
     private final UserService userService;
     private final ProductService productService;
+    private final EntryService entryService;
 
     @GetMapping("/{username}")
-    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
-        log.info("Request GET \"\"/api/v1/users/username\" with 'username='" + username + "' ACCEPTED");
+    public ResponseEntity<User> findUserByUsername(@PathVariable String username) {
+        log.info("Request GET \"\"/users/username\" with 'username='" + username + "' ACCEPTED");
         try {
             return ResponseEntity.ok(userService.findByUsername(username));
         } catch (UserNotFoundException e) {
@@ -48,6 +52,28 @@ public class UserController {
         } catch (UserNotFoundException | EmptyCollectionException e) {
             log.info(e.getMessage());
             return ResponseEntity.noContent().build();
+        }
+    }
+
+    @GetMapping("/{username}/entries")
+    public ResponseEntity<List<Entry>> findTodayEntries(@PathVariable("username") String username) {
+        log.info("Request GET \"/{username}/entries\" with 'username=" + username + "' ACCEPTED");
+        try {
+            return ResponseEntity.ok(entryService.findAllTodayEntries(username));
+        } catch (UserNotFoundException | EmptyCollectionException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{username}/entries/daily-stats")
+    public ResponseEntity<UserInfoDTO> findLastModifiedEntryWithUser(@PathVariable("username") String username) {
+        log.info("Request GET \"/{username}/entries/daily-stats\" with 'username=" + username + "' ACCEPTED");
+        try {
+            return ResponseEntity.ok(entryService.findActualUserInfo(username));
+        } catch (UserNotFoundException | EmptyCollectionException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
         }
     }
 
