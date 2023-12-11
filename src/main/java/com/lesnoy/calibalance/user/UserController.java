@@ -38,20 +38,33 @@ public class UserController {
     }
 
     @GetMapping("/{username}/products")
-    public ResponseEntity<List<Product>> findUserProducts(@PathVariable String username,
-                                                          @RequestParam(name = "type-id", required = false) Integer ordinalType,
-                                                          @RequestParam(name = "name", required = false) String name) {
+    public ResponseEntity<List<Product>> findUserProductsByName(@PathVariable String username,
+                                                                @RequestParam(name = "type-id", required = false) Integer ordinalType,
+                                                                @RequestParam(name = "name", required = false) String name) {
         log.info("Request GET \"/{username}/products\" with 'username='" + username + "', 'ordinalType='" + ordinalType + "', 'name='" + name + "' ACCEPTED");
         try {
             if (ordinalType == null && name == null) {
                 return ResponseEntity.ok(productService.findProductsByUsername(username));
             } else if (ordinalType == null) {
                 return ResponseEntity.ok(productService.findProductsByUsernameAndName(username, name));
+            } else {
+                return ResponseEntity.ok(productService.findProductsByUsernameAndType(username, ordinalType));
             }
-            return ResponseEntity.ok(productService.findProductsByUsernameAndType(username, ordinalType));
         } catch (UserNotFoundException | EmptyCollectionException e) {
             log.info(e.getMessage());
             return ResponseEntity.noContent().build();
+        }
+    }
+
+    @GetMapping("/{username}/products/{id}")
+    public ResponseEntity<Product> findProductsById(@PathVariable String username,
+                                                    @PathVariable int id) {
+        log.info("Request GET \"/{username}/products/{id}\" with 'username=" + username + "', 'id="+  id + "' ACCEPTED");
+        try {
+            return ResponseEntity.ok(productService.findById(id));
+        } catch (NoValuePresentException e) {
+            log.info(e.getMessage());
+            return ResponseEntity.notFound().build();
         }
     }
 
