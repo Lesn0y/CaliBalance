@@ -1,6 +1,7 @@
-package com.lesnoy.calibalance.entry;
+package com.lesnoy.calibalance.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.lesnoy.calibalance.user.entry.Entry;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,11 +11,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class EntryDTO {
-
-    private String username;
-    @JsonProperty("product_id")
-    private int productId;
-    private int grams;
-
+public class UserInfoDTO {
+    private User user;
+    @JsonProperty("last_entry")
+    private Entry lastEntry;
 }

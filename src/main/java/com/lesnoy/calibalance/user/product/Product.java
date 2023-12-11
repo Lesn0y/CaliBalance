@@ -1,4 +1,4 @@
-package com.lesnoy.calibalance.product;
+package com.lesnoy.calibalance.user.product;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
