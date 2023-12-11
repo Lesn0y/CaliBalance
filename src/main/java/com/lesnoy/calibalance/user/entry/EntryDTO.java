@@ -11,10 +11,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EntryDTO {
-
     private String username;
     @JsonProperty("product_id")
     private int productId;
     private int grams;
-
 }

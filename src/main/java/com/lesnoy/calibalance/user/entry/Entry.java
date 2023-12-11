@@ -36,14 +36,18 @@ public class Entry {
     private int grams = 100;
     @JsonProperty("cal_left")
     @Column(name = "cal_left")
+    @PositiveOrZero
     private float calLeft;
     @JsonProperty("prot_left")
     @Column(name = "prot_left")
+    @PositiveOrZero
     private float protLeft;
     @JsonProperty("fats_left")
     @Column(name = "fats_left")
+    @PositiveOrZero
     private float fatsLeft;
     @JsonProperty("carbs_left")
     @Column(name = "carbs_left")
+    @PositiveOrZero
     private float carbsLeft;
 }
