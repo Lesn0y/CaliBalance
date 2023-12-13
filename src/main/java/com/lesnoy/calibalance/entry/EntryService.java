@@ -44,7 +44,7 @@ public class EntryService {
             newEntry.setCalLeft(lastModifiedEntry.getCalLeft() - (product.getCal() * entryDTO.getGrams() / 100));
             newEntry.setProtLeft(lastModifiedEntry.getProtLeft() - (product.getProt() * entryDTO.getGrams() / 100));
             newEntry.setFatsLeft(lastModifiedEntry.getFatsLeft() - (product.getFats() * entryDTO.getGrams() / 100));
-            newEntry.setCarbsLeft(lastModifiedEntry.getCarbsLeft() - (product.getFats() * entryDTO.getGrams() / 100));
+            newEntry.setCarbsLeft(lastModifiedEntry.getCarbsLeft() - (product.getCarbs() * entryDTO.getGrams() / 100));
         }
 
         return entryRepository.save(newEntry);
