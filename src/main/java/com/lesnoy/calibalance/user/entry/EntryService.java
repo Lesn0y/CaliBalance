@@ -1,30 +1,43 @@
-package com.lesnoy.calibalance.entry;
+package com.lesnoy.calibalance.user.entry;
 
+import com.lesnoy.calibalance.exception.EmptyCollectionException;
 import com.lesnoy.calibalance.exception.NoValuePresentException;
 import com.lesnoy.calibalance.exception.UserNotFoundException;
-import com.lesnoy.calibalance.product.Product;
-import com.lesnoy.calibalance.product.ProductService;
 import com.lesnoy.calibalance.user.User;
+import com.lesnoy.calibalance.user.UserInfoDTO;
 import com.lesnoy.calibalance.user.UserService;
+import com.lesnoy.calibalance.user.product.Product;
+import com.lesnoy.calibalance.user.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class EntryService {
 
-    private final EntryRepository entryRepository;
-    private final UserService userService;
     private final ProductService productService;
+    private final UserService userService;
+    private final EntryRepository entryRepository;
 
-    public Entry getLastModifiedEntry(String username) throws UserNotFoundException {
+    public List<Entry> findAllTodayEntries(String username) throws UserNotFoundException, EmptyCollectionException {
         User user = userService.findByUsername(username);
-        return entryRepository.findTodayLastEntry(user.getId());
+        List<Entry> todayEntries = entryRepository.findAllTodayEntries(user.getId());
+        if (todayEntries.isEmpty()) {
+            throw new EmptyCollectionException("User " + username + " has not saved anyone entries today");
+        }
+        return todayEntries;
     }
 
-    public Entry saveNewEntry(EntryDTO entryDTO) throws UserNotFoundException, NoValuePresentException {
+    public UserInfoDTO findActualUserInfo(String username) throws UserNotFoundException, EmptyCollectionException {
+        User user = userService.findByUsername(username);
+        List<Entry> todayEntries = findAllTodayEntries(username);
+        return new UserInfoDTO(user, todayEntries.get(todayEntries.size() - 1));
+    }
+
+    public Entry saveNewEntry(EntryDTO entryDTO) throws UserNotFoundException, NoValuePresentException, EmptyCollectionException {
         User user = userService.findByUsername(entryDTO.getUsername());
         Product product = productService.findById(entryDTO.getProductId());
 
@@ -34,7 +47,7 @@ public class EntryService {
         newEntry.setDate(new Date());
         newEntry.setGrams(entryDTO.getGrams());
 
-        Entry lastModifiedEntry = getLastModifiedEntry(user.getUsername());
+        Entry lastModifiedEntry = findActualUserInfo(user.getUsername()).getLastEntry();
         if (lastModifiedEntry == null) {
             newEntry.setCalLeft(user.getCal() - (product.getCal() * entryDTO.getGrams() / 100));
             newEntry.setProtLeft(user.getProt() - (product.getProt() * entryDTO.getGrams() / 100));

@@ -1,4 +1,4 @@
-package com.lesnoy.calibalance.product;
+package com.lesnoy.calibalance.user.product;
 
 import com.lesnoy.calibalance.exception.EmptyCollectionException;
 import com.lesnoy.calibalance.exception.NoValuePresentException;
