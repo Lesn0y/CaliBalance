@@ -64,4 +64,11 @@ public class ProductService {
         user.getProducts().add(product);
         return productRepository.save(product);
     }
+
+    public void deleteProductFromUser(int productId, String username) throws UserNotFoundException, NoValuePresentException {
+        User user = userService.findByUsername(username);
+        Product product = findById(productId);
+        user.getProducts().remove(product);
+        userService.save(user);
+    }
 }

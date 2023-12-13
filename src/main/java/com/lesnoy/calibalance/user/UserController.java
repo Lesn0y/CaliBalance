@@ -87,6 +87,19 @@ public class UserController {
         }
     }
 
+    @DeleteMapping("/{username}/products/{productId}")
+    public ResponseEntity<Product> deleteProductFromUserMenu(@PathVariable String username,
+                                                             @PathVariable int productId) {
+        log.info("Request DELETE \"/{username}/products/{productId}\" with 'username='"+  username + "', productId=' "+ productId + "' ACCEPTED");
+        try {
+            productService.deleteProductFromUser(productId, username);
+            return ResponseEntity.noContent().build();
+        } catch (UserNotFoundException | NoValuePresentException e) {
+            log.info(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @GetMapping("/{username}/entries/daily")
     public ResponseEntity<List<Entry>> findTodayEntries(@PathVariable("username") String username) {
         log.info("Request GET \"/{username}/entries/daily\" with 'username=" + username + "' ACCEPTED");
