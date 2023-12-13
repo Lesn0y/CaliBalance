@@ -4,6 +4,7 @@ import com.lesnoy.calibalance.exception.EmptyCollectionException;
 import com.lesnoy.calibalance.exception.NoValuePresentException;
 import com.lesnoy.calibalance.exception.UserNotFoundException;
 import com.lesnoy.calibalance.user.entry.Entry;
+import com.lesnoy.calibalance.user.entry.EntryDTO;
 import com.lesnoy.calibalance.user.entry.EntryService;
 import com.lesnoy.calibalance.user.product.Product;
 import com.lesnoy.calibalance.user.product.ProductService;
@@ -37,6 +38,12 @@ public class UserController {
         }
     }
 
+    @PostMapping
+    public ResponseEntity<User> saveUser(@RequestBody @Valid User user) {
+        log.info("Request POST \"/\" with 'user='" + user.getUsername() + "' ACCEPTED");
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(user));
+    }
+
     @GetMapping("/{username}/products")
     public ResponseEntity<List<Product>> findUserProductsByName(@PathVariable String username,
                                                                 @RequestParam(name = "type-id", required = false) Integer ordinalType,
@@ -59,10 +66,22 @@ public class UserController {
     @GetMapping("/{username}/products/{id}")
     public ResponseEntity<Product> findProductsById(@PathVariable String username,
                                                     @PathVariable int id) {
-        log.info("Request GET \"/{username}/products/{id}\" with 'username=" + username + "', 'id="+  id + "' ACCEPTED");
+        log.info("Request GET \"/{username}/products/{id}\" with 'username=" + username + "', 'id=" + id + "' ACCEPTED");
         try {
             return ResponseEntity.ok(productService.findById(id));
         } catch (NoValuePresentException e) {
+            log.info(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/{username}/products")
+    public ResponseEntity<Product> saveProductToUser(@PathVariable String username,
+                                                     @RequestBody @Valid Product product) {
+        log.info("Request POST \"/{username}/products\" with 'username='" + username + "', product=' " + product.getName() + "' ACCEPTED");
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(productService.saveProductToUser(product, username));
+        } catch (UserNotFoundException e) {
             log.info(e.getMessage());
             return ResponseEntity.notFound().build();
         }
@@ -90,20 +109,15 @@ public class UserController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<User> saveUser(@RequestBody @Valid User user) {
-        log.info("Request POST \"/api/v1/users\" with 'user='" + user.getUsername() + "' ACCEPTED");
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(user));
-    }
-
-    @DeleteMapping("/{username}")
-    public ResponseEntity<Object> deleteUserByUsername(@PathVariable String username) {
+    @PostMapping("/{username}/entries")
+    public ResponseEntity<Entry> saveNewEntry(@PathVariable("username") String username,
+                                                    @RequestBody EntryDTO entryDTO) {
+        log.info("Request POST \"/{username}/entries\" with 'username=" + username + "', ACCEPTED");
         try {
-            userService.deleteByUsername(username);
-            return ResponseEntity.noContent().build();
-        } catch (UserNotFoundException e) {
-            log.info(e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.ok(entryService.saveNewEntry(entryDTO, username));
+        } catch (UserNotFoundException | NoValuePresentException | EmptyCollectionException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
         }
     }
 }
