@@ -37,8 +37,8 @@ public class EntryService {
         return new UserInfoDTO(user, todayEntries.get(todayEntries.size() - 1));
     }
 
-    public Entry saveNewEntry(EntryDTO entryDTO) throws UserNotFoundException, NoValuePresentException, EmptyCollectionException {
-        User user = userService.findByUsername(entryDTO.getUsername());
+    public Entry saveNewEntry(EntryDTO entryDTO, String username) throws UserNotFoundException, NoValuePresentException, EmptyCollectionException {
+        User user = userService.findByUsername(username);
         Product product = productService.findById(entryDTO.getProductId());
 
         Entry newEntry = new Entry();
@@ -57,9 +57,8 @@ public class EntryService {
             newEntry.setCalLeft(lastModifiedEntry.getCalLeft() - (product.getCal() * entryDTO.getGrams() / 100));
             newEntry.setProtLeft(lastModifiedEntry.getProtLeft() - (product.getProt() * entryDTO.getGrams() / 100));
             newEntry.setFatsLeft(lastModifiedEntry.getFatsLeft() - (product.getFats() * entryDTO.getGrams() / 100));
-            newEntry.setCarbsLeft(lastModifiedEntry.getCarbsLeft() - (product.getFats() * entryDTO.getGrams() / 100));
+            newEntry.setCarbsLeft(lastModifiedEntry.getCarbsLeft() - (product.getCarbs() * entryDTO.getGrams() / 100));
         }
-
         return entryRepository.save(newEntry);
     }
 }
