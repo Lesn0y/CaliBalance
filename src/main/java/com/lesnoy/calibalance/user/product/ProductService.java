@@ -1,5 +1,6 @@
 package com.lesnoy.calibalance.user.product;
 
+import com.lesnoy.calibalance.exception.BadParametersException;
 import com.lesnoy.calibalance.exception.EmptyCollectionException;
 import com.lesnoy.calibalance.exception.NoValuePresentException;
 import com.lesnoy.calibalance.exception.UserNotFoundException;
@@ -15,8 +16,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductService {
 
-    private final ProductRepository productRepository;
     private final UserService userService;
+    private final ProductRepository productRepository;
 
     public Product findById(int id) throws NoValuePresentException {
         Optional<Product> product = productRepository.findById(id);
@@ -26,7 +27,15 @@ public class ProductService {
         return product.get();
     }
 
-    public List<Product> findProductsByOwnerAndName(String owner, String name) throws EmptyCollectionException, UserNotFoundException {
+    public List<Product> findProductsByUsername(String username) throws UserNotFoundException, EmptyCollectionException {
+        User user = userService.findByUsername(username);
+        if (user.getProducts().isEmpty()) {
+            throw new EmptyCollectionException("User " + username + " has not saved anyone products");
+        }
+        return user.getProducts();
+    }
+
+    public List<Product> findProductsByUsernameAndName(String owner, String name) throws EmptyCollectionException, UserNotFoundException {
         User user = userService.findByUsername(owner);
         List<Product> products = user.getProducts()
                 .stream()
@@ -38,11 +47,10 @@ public class ProductService {
         return products;
     }
 
-    public List<Product> findAdminProductsByName(String name) throws EmptyCollectionException, UserNotFoundException {
-        return findProductsByOwnerAndName("ADMIN", name);
-    }
-
-    public List<Product> findProductsByOwnerAndType(String owner, int typeOrdinal) throws UserNotFoundException, EmptyCollectionException {
+    public List<Product> findProductsByUsernameAndType(String owner, int typeOrdinal) throws UserNotFoundException, EmptyCollectionException, BadParametersException {
+        if (typeOrdinal > ProductType.values().length - 1 || typeOrdinal < 0) {
+            throw new BadParametersException("There is no product type with id=" + typeOrdinal);
+        }
         User user = userService.findByUsername(owner);
         List<Product> products = user.getProducts()
                 .stream()
@@ -55,24 +63,17 @@ public class ProductService {
         return products;
     }
 
-    public List<Product> findAdminProductsByType(int typeOrdinal) throws EmptyCollectionException, UserNotFoundException {
-        return findProductsByOwnerAndType("ADMIN", typeOrdinal);
-    }
-
-    public Product saveProductToUser(Product product, String owner) throws UserNotFoundException {
-        User user = userService.findByUsername(owner);
+    public Product saveProductToUser(Product product, String username) throws UserNotFoundException {
+        User user = userService.findByUsername(username);
         user.getProducts().add(product);
         return productRepository.save(product);
     }
 
-    public void deleteProductFromUser(int productId, String owner) throws UserNotFoundException, NoValuePresentException {
-        User user = userService.findByUsername(owner);
-        Optional<Product> product = user.getProducts().stream().filter(pr -> pr.getId() == productId).findFirst();
-
-        if (product.isEmpty()) {
-            throw new NoValuePresentException("Product with id = " + productId + " is not saved with user");
-        }
-        user.getProducts().remove(product.get());
+    public void deleteProductFromUser(int productId, String username) throws UserNotFoundException, NoValuePresentException {
+        User user = userService.findByUsername(username);
+        Product product = findById(productId);
+        user.getProducts().remove(product);
+        productRepository.delete(product);
         userService.save(user);
     }
 }
