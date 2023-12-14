@@ -1,5 +1,6 @@
 package com.lesnoy.calibalance.user.product;
 
+import com.lesnoy.calibalance.exception.BadParametersException;
 import com.lesnoy.calibalance.exception.EmptyCollectionException;
 import com.lesnoy.calibalance.exception.NoValuePresentException;
 import com.lesnoy.calibalance.exception.UserNotFoundException;
@@ -46,7 +47,10 @@ public class ProductService {
         return products;
     }
 
-    public List<Product> findProductsByUsernameAndType(String owner, int typeOrdinal) throws UserNotFoundException, EmptyCollectionException {
+    public List<Product> findProductsByUsernameAndType(String owner, int typeOrdinal) throws UserNotFoundException, EmptyCollectionException, BadParametersException {
+        if (typeOrdinal > ProductType.values().length - 1 || typeOrdinal < 0) {
+            throw new BadParametersException("There is no product type with id=" + typeOrdinal);
+        }
         User user = userService.findByUsername(owner);
         List<Product> products = user.getProducts()
                 .stream()
@@ -69,6 +73,7 @@ public class ProductService {
         User user = userService.findByUsername(username);
         Product product = findById(productId);
         user.getProducts().remove(product);
+        productRepository.delete(product);
         userService.save(user);
     }
 }
