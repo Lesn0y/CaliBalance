@@ -4,8 +4,6 @@ import com.lesnoy.calibalance.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -13,11 +11,9 @@ public class UserService {
     private final UserRepository repository;
 
     public User findByUsername(String username) throws UserNotFoundException {
-        Optional<User> user = repository.findByUsername(username);
-        if (user.isEmpty()) {
-            throw new UserNotFoundException("User with username '" + username + "' not exists");
-        }
-        return user.get();
+        return repository.findByUsername(username)
+                .orElseThrow(() ->
+                        new UserNotFoundException("User with username '" + username + "' not exists"));
     }
 
     public User save(User user) {
@@ -25,11 +21,10 @@ public class UserService {
     }
 
     public void deleteByUsername(String username) throws UserNotFoundException {
-        Optional<User> optUser = repository.findByUsername(username);
-        if (optUser.isEmpty()) {
-            throw new UserNotFoundException("User with username '" + username + "' not exists");
-        }
-        repository.delete(optUser.get());
+        User user = repository.findByUsername(username)
+                .orElseThrow(() ->
+                        new UserNotFoundException("User with username '" + username + "' not exists"));
+        repository.delete(user);
     }
 
     private User calculateStats(User user) {

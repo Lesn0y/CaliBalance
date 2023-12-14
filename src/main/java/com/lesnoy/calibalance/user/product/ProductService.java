@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,11 +19,9 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     public Product findById(int id) throws NoValuePresentException {
-        Optional<Product> product = productRepository.findById(id);
-        if (product.isEmpty()) {
-            throw new NoValuePresentException("Product with id = " + id + " not exists");
-        }
-        return product.get();
+        return productRepository.findById(id)
+                .orElseThrow(() ->
+                        new NoValuePresentException("Product with id = " + id + " not exists"));
     }
 
     public List<Product> findProductsByUsername(String username) throws UserNotFoundException, EmptyCollectionException {
