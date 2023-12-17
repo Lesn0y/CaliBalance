@@ -70,7 +70,6 @@ public class ProductService {
         User user = userService.findByUsername(username);
         Product product = findById(productId);
         user.getProducts().remove(product);
-        productRepository.delete(product);
         userService.save(user);
     }
 }
