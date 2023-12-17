@@ -40,9 +40,21 @@ public class UserController {
         }
     }
 
+    @PutMapping("/{username}")
+    public ResponseEntity<User> updateUserInfo(@PathVariable String username,
+                                               @RequestBody UserCallInfoDTO userCallInfoDTO) {
+        log.info("Request POST /users/" + username + " ACCEPTED");
+        try {
+            return ResponseEntity.ok(userService.updateUserCallInfo(username, userCallInfoDTO));
+        } catch (UserNotFoundException e) {
+            log.error(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
     @PostMapping
     public ResponseEntity<User> saveUser(@RequestBody @Valid User user) {
-        log.error("Request POST / with 'user='" + user.getUsername() + "' ACCEPTED");
+        log.info("Request POST / with 'user='" + user.getUsername() + "' ACCEPTED");
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(user));
     }
 
@@ -106,7 +118,7 @@ public class UserController {
     }
 
     @GetMapping("/{username}/entries/daily")
-    public ResponseEntity<List<Entry>> findTodayEntries(@PathVariable("username") String username) {
+    public ResponseEntity<List<Entry>> findTodayUserEntries(@PathVariable("username") String username) {
         log.info("Request GET /" + username + "/entries/daily ACCEPTED");
         try {
             return ResponseEntity.ok(entryService.findAllTodayEntries(username));
@@ -117,11 +129,11 @@ public class UserController {
     }
 
     @GetMapping("/{username}/entries/daily-last")
-    public ResponseEntity<UserInfoDTO> findLastModifiedEntryWithUser(@PathVariable("username") String username) {
+    public ResponseEntity<UserEntryDTO> findLastModifiedUserEntry(@PathVariable("username") String username) {
         log.info("Request GET /" + username + "/entries/daily-stats ACCEPTED");
         try {
             return ResponseEntity.ok(entryService.findActualUserInfo(username));
-        } catch (UserNotFoundException | EmptyCollectionException e) {
+        } catch (UserNotFoundException e) {
             log.error(e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -130,9 +142,9 @@ public class UserController {
     @PostMapping("/{username}/entries")
     public ResponseEntity<Entry> saveNewEntry(@PathVariable("username") String username,
                                               @RequestBody EntryDTO entryDTO) {
-        log.info("Request POST /" + username + "/entries, product_id=" + entryDTO.getProductId() +  " ACCEPTED");
+        log.info("Request POST /" + username + "/entries, product_id=" + entryDTO.getProductId() + " ACCEPTED");
         try {
-            return ResponseEntity.ok(entryService.saveNewEntry(entryDTO, username));
+            return new ResponseEntity<>(entryService.saveNewEntry(entryDTO, username),HttpStatus.CREATED);
         } catch (UserNotFoundException | NoValuePresentException e) {
             log.error(e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());

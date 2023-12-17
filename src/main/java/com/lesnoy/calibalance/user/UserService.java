@@ -17,7 +17,27 @@ public class UserService {
     }
 
     public User save(User user) {
-        return repository.save(calculateStats(user));
+        try {
+            User oldUser = findByUsername(user.getUsername());
+            oldUser.setAge(user.getAge());
+            oldUser.setHeight(user.getHeight());
+            oldUser.setWeight(user.getWeight());
+            oldUser.setSex(user.getSex());
+            oldUser.setGoal(user.getGoal());
+            oldUser.setActivity(user.getActivity());
+            return repository.save(calculateStats(oldUser));
+        } catch (UserNotFoundException e) {
+            return repository.save(calculateStats(user));
+        }
+    }
+
+    public User updateUserCallInfo(String username, UserCallInfoDTO userCallInfo) throws UserNotFoundException {
+        User user = findByUsername(username);
+        user.setCal(userCallInfo.getCal());
+        user.setProt(userCallInfo.getProt());
+        user.setFats(userCallInfo.getFats());
+        user.setCarbs(userCallInfo.getCarbs());
+        return repository.save(user);
     }
 
     public void deleteByUsername(String username) throws UserNotFoundException {
