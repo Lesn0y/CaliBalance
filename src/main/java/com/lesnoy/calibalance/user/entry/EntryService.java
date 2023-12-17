@@ -4,7 +4,7 @@ import com.lesnoy.calibalance.exception.EmptyCollectionException;
 import com.lesnoy.calibalance.exception.NoValuePresentException;
 import com.lesnoy.calibalance.exception.UserNotFoundException;
 import com.lesnoy.calibalance.user.User;
-import com.lesnoy.calibalance.user.UserInfoDTO;
+import com.lesnoy.calibalance.user.UserEntryDTO;
 import com.lesnoy.calibalance.user.UserService;
 import com.lesnoy.calibalance.user.product.Product;
 import com.lesnoy.calibalance.user.product.ProductService;
@@ -31,10 +31,15 @@ public class EntryService {
         return todayEntries;
     }
 
-    public UserInfoDTO findActualUserInfo(String username) throws UserNotFoundException, EmptyCollectionException {
+    public UserEntryDTO findActualUserInfo(String username) throws UserNotFoundException {
         User user = userService.findByUsername(username);
-        List<Entry> todayEntries = findAllTodayEntries(username);
-        return new UserInfoDTO(user, todayEntries.get(todayEntries.size() - 1));
+        List<Entry> todayEntries = null;
+        try {
+            todayEntries = findAllTodayEntries(username);
+        } catch (EmptyCollectionException e) {
+            return new UserEntryDTO(user, null);
+        }
+        return new UserEntryDTO(user, todayEntries.get(todayEntries.size() - 1));
     }
 
     public Entry saveNewEntry(EntryDTO entryDTO, String username) throws UserNotFoundException, NoValuePresentException {
@@ -46,17 +51,18 @@ public class EntryService {
         newEntry.setProduct(product);
         newEntry.setDate(new Date());
         newEntry.setGrams(entryDTO.getGrams());
-        try {
-            Entry lastModifiedEntry = findActualUserInfo(user.getUsername()).getLastEntry();
+
+        Entry lastModifiedEntry = findActualUserInfo(user.getUsername()).getLastEntry();
+        if (lastModifiedEntry != null) {
             newEntry.setCalLeft(lastModifiedEntry.getCalLeft() - (product.getCal() * entryDTO.getGrams() / 100));
             newEntry.setProtLeft(lastModifiedEntry.getProtLeft() - (product.getProt() * entryDTO.getGrams() / 100));
             newEntry.setFatsLeft(lastModifiedEntry.getFatsLeft() - (product.getFats() * entryDTO.getGrams() / 100));
             newEntry.setCarbsLeft(lastModifiedEntry.getCarbsLeft() - (product.getCarbs() * entryDTO.getGrams() / 100));
-        } catch (EmptyCollectionException e) {
+        } else {
             newEntry.setCalLeft(user.getCal() - (product.getCal() * entryDTO.getGrams() / 100));
             newEntry.setProtLeft(user.getProt() - (product.getProt() * entryDTO.getGrams() / 100));
             newEntry.setFatsLeft(user.getFats() - (product.getFats() * entryDTO.getGrams() / 100));
-            newEntry.setCarbsLeft(user.getCarbs() - (product.getFats() * entryDTO.getGrams() / 100));
+            newEntry.setCarbsLeft(user.getCarbs() - (product.getCarbs() * entryDTO.getGrams() / 100));
         }
         return entryRepository.save(newEntry);
     }

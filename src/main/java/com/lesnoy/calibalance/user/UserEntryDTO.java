@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class UserInfoDTO {
+public class UserEntryDTO {
     private User user;
     @JsonProperty("last_entry")
     private Entry lastEntry;
