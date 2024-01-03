@@ -7,12 +7,11 @@ import lombok.Getter;
 @Getter
 public enum Goal {
 
-    PUMP_UP(0.15f, 0.3f / 4, 0.15f / 9, 0.55f / 4),
-    KEEP_FIT(0, 0.33f / 4, 0.25f / 9, 0.42f / 4),
-    SLIM(-0.15f, 0.4f / 4, 0.25f / 9, 0.35f / 4);
+    PUMP_UP(0.15f, 2, 1),
+    KEEP_FIT(0, 1.5f, 0.9f),
+    SLIM(-0.15f, 2, 0.7f);
 
     private final float calMultiplier;
     private final float protMultiplier;
     private final float fatMultiplier;
-    private final float carbsMultiplier;
 }

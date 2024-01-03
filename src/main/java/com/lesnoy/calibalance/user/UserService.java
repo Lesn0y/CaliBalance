@@ -54,9 +54,14 @@ public class UserService {
         if (!user.getGoal().equals(Goal.KEEP_FIT)) {
             user.setCal(user.getCal() + user.getCal() * user.getGoal().getCalMultiplier());
         }
-        user.setProt(user.getCal() * user.getGoal().getProtMultiplier());
-        user.setFats(user.getCal() * user.getGoal().getFatMultiplier());
-        user.setCarbs(user.getCal() * user.getGoal().getCarbsMultiplier());
+
+        float tempCal = user.getCal();
+        user.setProt(user.getGoal().getProtMultiplier() * user.getWeight());
+        tempCal -= user.getProt() * 4;
+        user.setFats(user.getGoal().getFatMultiplier() * user.getWeight());
+        tempCal -= user.getFats() * 9;
+        user.setCarbs(tempCal / 4);
+
         return user;
     }
 }

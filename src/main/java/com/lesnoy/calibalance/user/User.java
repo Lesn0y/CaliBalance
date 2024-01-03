@@ -1,6 +1,5 @@
 package com.lesnoy.calibalance.user;
 
-import com.lesnoy.calibalance.user.entry.Entry;
 import com.lesnoy.calibalance.user.product.Product;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
