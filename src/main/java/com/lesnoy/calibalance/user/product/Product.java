@@ -27,8 +27,12 @@ public class Product {
     private ProductType productType;
     @PositiveOrZero
     private int grams = 100;
+    @PositiveOrZero
     private float cal;
+    @PositiveOrZero
     private float prot;
+    @PositiveOrZero
     private float fats;
+    @PositiveOrZero
     private float carbs;
 }
